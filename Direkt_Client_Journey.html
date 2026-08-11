@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Direkt — Full Client Journey</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;background:#F8F9FC;min-height:100vh;padding:2.5rem 1rem}
+:root{
+  --navy:#0B1E3D;--blue:#3B7DD8;--green:#1D9E75;--gold:#F0C96A;
+  --red:#E24B4A;--offwhite:#F8F9FC;--muted:#6B7A99;--border:#E2E8F0;
+}
+.wrap{max-width:720px;margin:0 auto}
+.header{margin-bottom:2rem}
+.logo{font-size:13px;font-weight:800;color:var(--navy);letter-spacing:.05em;margin-bottom:1.5rem;display:flex;align-items:center;gap:6px}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:.5rem}
+h1{font-size:32px;font-weight:800;color:var(--navy);line-height:1.2;margin-bottom:.4rem}
+.sub{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:1.5rem}
+.progress-wrap{margin-bottom:2rem}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.progress-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .5s ease}
+.steps{display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:72px 1fr;gap:0;cursor:pointer;position:relative}
+.connector{position:absolute;left:35px;top:60px;width:2px;height:calc(100% - 28px);background:var(--border);z-index:0;transition:background .4s}
+.step.active .connector,.step.done .connector{background:var(--green)}
+.step-left{display:flex;flex-direction:column;align-items:center;padding-top:10px;position:relative;z-index:1}
+.num{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;border:2px solid var(--border);background:#fff;color:var(--muted);transition:all .3s;flex-shrink:0}
+.step.active .num{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 0 0 5px rgba(11,30,61,.1)}
+.step.done .num{background:var(--green);border-color:var(--green);color:#fff}
+.step-right{padding:10px 0 36px 18px}
+.step-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:6px}
+.tag-anon{background:#E8F7F3;color:#0F6E56}
+.tag-ai{background:#EBF2FB;color:#185FA5}
+.tag-match{background:#FFF8E7;color:#854F0B}
+.tag-meet{background:#EBF2FB;color:#185FA5}
+.tag-reveal{background:#FDECEC;color:#993C1D}
+.tag-deal{background:#E8F7F3;color:#0F6E56}
+.step-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:5px;line-height:1.3;transition:color .2s}
+.step.active .step-title{color:var(--navy)}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.65}
+.detail-box{overflow:hidden;max-height:0;transition:max-height .45s ease,opacity .3s;opacity:0}
+.step.active .detail-box{max-height:500px;opacity:1}
+.detail-inner{background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:14px}
+.detail-inner h4{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.pill{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600}
+.pill-buyer{background:var(--offwhite);color:var(--navy);border:1px solid var(--border)}
+.pill-dev{background:#EBF2FB;color:#185FA5;border:1px solid #B5D4F4}
+.pill-direkt{background:#E8F7F3;color:#0F6E56;border:1px solid #9FE1CB}
+.mock{background:var(--offwhite);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--navy);font-family:'SF Mono',Monaco,monospace;line-height:1.8;border:1px solid var(--border)}
+.mock .k{color:var(--blue);font-weight:700}
+.mock .v{color:var(--green)}
+.mock .g{color:#B8860B;font-weight:600}
+.handle-badge{display:inline-flex;align-items:center;gap:7px;background:var(--navy);color:#fff;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:800;letter-spacing:.06em}
+.handle-dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.chat-wrap{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.bubble-buyer{background:#EBF2FB;border-radius:14px 14px 14px 3px;padding:9px 13px;font-size:13px;color:#0C447C;max-width:85%;line-height:1.5}
+.bubble-ai{background:var(--navy);border-radius:14px 14px 3px 14px;padding:9px 13px;font-size:13px;color:#fff;max-width:85%;align-self:flex-end;line-height:1.5}
+.bridge-wrap{display:flex;align-items:center;gap:0;margin-bottom:12px;justify-content:center}
+.bridge-node{text-align:center;padding:12px 16px;background:var(--offwhite);border-radius:10px;border:1px solid var(--border);min-width:90px}
+.bridge-icon{font-size:24px;margin-bottom:3px}
+.bridge-label{font-size:11px;color:var(--muted);font-weight:600}
+.bridge-line{flex:1;height:2px;background:var(--blue);position:relative;margin:0 6px}
+.bridge-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border:1.5px solid var(--blue);border-radius:6px;padding:3px 8px;font-size:10px;color:var(--blue);font-weight:700;white-space:nowrap}
+.reveal-steps{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.reveal-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--navy)}
+.reveal-num{width:22px;height:22px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:800;flex-shrink:0}
+.reward-bar{background:var(--offwhite);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);margin-bottom:12px}
+.reward-amt{font-size:26px;font-weight:800;color:var(--green)}
+.reward-lbl{font-size:11px;color:var(--muted);font-weight:600;margin-bottom:2px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.s-card{background:var(--offwhite);border-radius:10px;padding:12px;border:1px solid var(--border);text-align:center}
+.s-val{font-size:22px;font-weight:800}
+.s-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:2px}
+.nav{display:flex;gap:10px;margin-top:2rem;flex-wrap:wrap}
+.nav button{font-size:14px;padding:10px 20px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--navy);cursor:pointer;font-weight:700;transition:all .2s}
+.nav button:hover{border-color:var(--blue);color:var(--blue)}
+.nav button.primary{background:var(--navy);color:#fff;border-color:var(--navy)}
+.nav button.primary:hover{background:#1a3560}
+.nav button:disabled{opacity:.4;pointer-events:none}
+.step-nav-dots{display:flex;gap:6px;align-items:center;margin-left:auto}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.dot.active{background:var(--navy);width:20px;border-radius:4px}
+.dot.done{background:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="header">
+    <div class="logo">DIREKT<span style="color:var(--blue)">•</span></div>
+    <p class="eyebrow">— How Direkt Works</p>
+    <h1>The full buyer journey.</h1>
+    <p class="sub">From anonymous entry to deal close and instant reward — every step private and in your control. Click any stage to explore.</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      <span id="prog-label">Stage 1 of 6 — Anonymous Entry</span>
+      <span id="prog-pct">17%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:17%"></div></div>
+  </div>
+
+  <div class="steps" id="steps">
+
+    <div class="step active" data-i="0">
+      <div class="connector"></div>
+      <div class="step-left"><div class="num">1</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-anon">Anonymous entry</div>
+        <div class="step-title">App opens. Handle assigned. Nothing shared.</div>
+        <div class="step-desc">No sign-up, no phone, no email. You get a private handle the moment you open the app.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>What happens instantly</h4>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div class="handle-badge"><div class="handle-dot"></div>EG-A82K</div>
+            <span style="font-size:12px;color:var(--muted);line-height:1.5">Your private identity. No name, phone, or email ever stored.</span>
+          </div>
+          <div class="pills">
+            <span class="pill pill-buyer">Zero PII collected</span>
+            <span class="pill pill-buyer">6-digit recovery code</span>
+            <span class="pill pill-buyer">Cross-device restore</span>
+          </div>
+          <div class="mock">
+            <span class="k">handle</span>: <span class="v">EG-A82K</span><br>
+            <span class="k">pii_collected</span>: <span class="g">false</span><br>
+            <span class="k">session</span>: <span class="v">encrypted</span><br>
+            <span class="k">phone</span>: <span class="g">null</span> &nbsp; <span class="k">email</span>: <span class="g">null</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="step" data-i="1">
+      <div class="connector"></div>
+      <div class="step-left"><div class="num">2</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-ai">AI discovery</div>
+        <div class="step-title">Talk to Direkt AI in Egyptian dialect.</div>
+        <div class="step-desc">No forms. Pure conversation. Your intent profile builds silently in the background as you chat.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>Sample conversation</h4>
+          <div class="chat-wrap">
+            <div class="bubble-buyer">عايز حاجة للعيلة في التجمع — شقة حوالي 8-10 مليون</div>
+            <div class="bubble-ai">تمام، انت بتدور على شقة ولا فيلا؟</div>
+            <div class="bubble-buyer">شقة، حوالي 8-9 مليون</div>
+            <div class="bubble-ai">لقيتلك Hyde Park — 2 bed، 120 متر، 8.85M EGP، تسليم Q4 2027. ROI 8.5%، كوميشن 88.5K ✓</div>
+          </div>
+          <div class="pills">
+            <span class="pill pill-direkt">Intent scored silently</span>
+            <span class="pill pill-direkt">Arabic + dialect</span>
+            <span class="pill pill-buyer">Or filter browse</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="step" data-i="2">
+      <div class="connector"></div>
+      <div class="step-left"><div class="num">3</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-match">Smart recommendations</div>
+        <div class="step-title">Matched units. Explained scores. Your shortlist.</div>
+        <div class="step-desc">Every recommendation comes with a reason. Save, compare, and share with family — still completely anonymous.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>What the developer sees before any meeting</h4>
+          <div class="mock">
+            <span class="k">intent_score</span>: <span class="v">87 / 100</span><br>
+            <span class="k">budget_range</span>: <span class="v">8–11M EGP</span><br>
+            <span class="k">purpose</span>: <span class="v">Investment</span><br>
+            <span class="k">tier</span>: <span class="g">HOT</span><br>
+            <span class="k">name</span>: <span class="g">null</span> &nbsp; <span class="k">phone</span>: <span class="g">null</span> &nbsp; <span class="k">email</span>: <span class="g">null</span>
+          </div>
+          <div class="pills" style="margin-top:10px">
+            <span class="pill pill-buyer">Save to shortlist</span>
+            <span class="pill pill-buyer">Compare units</span>
+            <span class="pill pill-buyer">Share anonymously</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="step" data-i="3">
+      <div class="connector"></div>
+      <div class="step-left"><div class="num">4</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-meet">Anonymous meeting</div>
+        <div class="step-title">Call or video. Identity stays hidden. Attribution locked.</div>
+        <div class="step-desc">Direkt bridges the call via its own number. The developer gets your AI intent brief — never your contact details.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>How the bridge call works</h4>
+          <div class="bridge-wrap">
+            <div class="bridge-node">
+              <div class="bridge-icon">👤</div>
+              <div class="bridge-label">Buyer EG-A82K</div>
+            </div>
+            <div class="bridge-line">
+              <div class="bridge-badge">Direkt bridge</div>
+            </div>
+            <div class="bridge-node">
+              <div class="bridge-icon">🏢</div>
+              <div class="bridge-label">Developer</div>
+            </div>
+          </div>
+          <div class="pills">
+            <span class="pill pill-buyer">Buyer number never exposed</span>
+            <span class="pill pill-dev">Both parties hear disclosure</span>
+            <span class="pill pill-direkt">Call recorded + attributed</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="step" data-i="4">
+      <div class="connector"></div>
+      <div class="step-left"><div class="num">5</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-reveal">Identity reveal</div>
+        <div class="step-title">Your choice. Three fields. One encrypted packet.</div>
+        <div class="step-desc">When you're ready: name, mobile, email — sent to one developer only. Full audit log visible to you forever.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>The reveal flow</h4>
+          <div class="reveal-steps">
+            <div class="reveal-step"><div class="reveal-num">1</div>Buyer confirms: share with Palm Hills only</div>
+            <div class="reveal-step"><div class="reveal-num">2</div>Encrypted contact packet sent to that developer only</div>
+            <div class="reveal-step"><div class="reveal-num">3</div>Account silently created. Audit log timestamped and locked.</div>
+          </div>
+          <div class="pills">
+            <span class="pill pill-buyer">1% reward now activated</span>
+            <span class="pill pill-direkt">Attribution timestamped</span>
+            <span class="pill pill-dev">Developer receives contact</span>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="step" data-i="5">
+      <div class="step-left"><div class="num">6</div></div>
+      <div class="step-right">
+        <div class="step-tag tag-deal">Deal + reward</div>
+        <div class="step-title">Deal closes. Reward hits your wallet instantly.</div>
+        <div class="step-desc">Direkt collects 3% from the developer. You receive 1% of the deal value — straight to your reward wallet.</div>
+        <div class="detail-box"><div class="detail-inner">
+          <h4>Economics on a 10M EGP unit</h4>
+          <div class="reward-bar">
+            <div>
+              <div class="reward-lbl">Your instant reward</div>
+              <div class="reward-amt">100,000 EGP</div>
+            </div>
+            <div style="text-align:right">
+              <div class="reward-lbl">Direkt net</div>
+              <div style="font-size:18px;font-weight:800;color:var(--blue)">170,000 EGP</div>
+            </div>
+          </div>
+          <div class="summary-grid">
+            <div class="s-card"><div class="s-val" style="color:var(--green)">1%</div><div class="s-lbl">Buyer reward</div></div>
+            <div class="s-card"><div class="s-val" style="color:var(--blue)">1.7%</div><div class="s-lbl">Direkt net</div></div>
+            <div class="s-card"><div class="s-val" style="color:var(--navy)">3%</div><div class="s-lbl">Developer commission</div></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav">
+    <button id="btn-prev" onclick="move(-1)" disabled>← Previous</button>
+    <button id="btn-next" class="primary" onclick="move(1)">Next stage →</button>
+    <div class="step-nav-dots" id="dots"></div>
+  </div>
+
+  <p style="font-size:11px;color:var(--muted);margin-top:1.5rem;text-align:center">
+    DIREKT• — Egypt's first anonymous AI-powered real estate marketplace · Confidential · Seed Round · 2026
+  </p>
+</div>
+
+<script>
+let cur = 0;
+const total = 6;
+const stages = ['Anonymous Entry','AI Discovery','Smart Recommendations','Anonymous Meeting','Identity Reveal','Deal + Reward'];
+const steps = document.querySelectorAll('.step');
+const prog = document.getElementById('prog');
+const progLabel = document.getElementById('prog-label');
+const progPct = document.getElementById('prog-pct');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const dotsWrap = document.getElementById('dots');
+
+// Build dots
+stages.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className = 'dot';
+  d.onclick = ()=>{ cur=i; render(); };
+  dotsWrap.appendChild(d);
+});
+
+function render(){
+  const pct = Math.round((cur+1)/total*100);
+  prog.style.width = pct+'%';
+  progLabel.textContent = 'Stage '+(cur+1)+' of '+total+' — '+stages[cur];
+  progPct.textContent = pct+'%';
+  steps.forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i===cur) s.classList.add('active');
+    if(i<cur) s.classList.add('done');
+  });
+  const dots = dotsWrap.querySelectorAll('.dot');
+  dots.forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i===cur) d.classList.add('active');
+    if(i<cur) d.classList.add('done');
+  });
+  btnPrev.disabled = cur===0;
+  btnNext.textContent = cur===total-1 ? 'Journey complete ✓' : 'Next stage →';
+  btnNext.disabled = cur===total-1;
+}
+
+function move(d){
+  cur = Math.max(0,Math.min(total-1,cur+d));
+  render();
+  steps[cur].scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+steps.forEach((s,i)=>{ s.addEventListener('click',()=>{ cur=i; render(); }); });
+render();
+</script>
+</body>
+</html>
